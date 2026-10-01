@@ -807,6 +807,7 @@ export function App() {
     setToken('');
     setMe(undefined);
     setChatHistory([]);
+    setActiveTab('chat');
     setViewMode('public');
     setPublicPage('platform');
     window.location.hash = 'platform';
@@ -887,6 +888,7 @@ export function App() {
 
       if (profile.platformAdmin) {
         setActiveTab('platform');
+        try { window.location.hash = 'tab-platform'; } catch {}
         const [companies, stats, inquiries] = await Promise.all([
           api('/platform/companies', token),
           api('/dashboard', token),
@@ -897,6 +899,30 @@ export function App() {
         setPlatformInquiries(inquiries);
         return;
       }
+
+      // Automatically reconcile active tab for non-platform users
+      setActiveTab(curr => {
+        const hash = window.location.hash.replace('#', '');
+        if (hash.startsWith('tab-')) {
+          const req = hash.replace('tab-', '');
+          if (['chat', 'departments', 'documents', 'analytics', 'audit'].includes(req)) {
+            return req as any;
+          }
+          if (req === 'approvals' && profile.role === 'tenant_admin') {
+            return 'approvals';
+          }
+        }
+        // If current tab is platform or unauthorized, default to chat
+        if (curr === 'platform') {
+          try { window.location.hash = 'tab-chat'; } catch {}
+          return 'chat';
+        }
+        if (curr === 'approvals' && profile.role !== 'tenant_admin') {
+          try { window.location.hash = 'tab-chat'; } catch {}
+          return 'chat';
+        }
+        return curr || 'chat';
+      });
 
       const [visibleDepts, catalogDepts] = await Promise.all([
         api('/departments', token) as Promise<Department[]>,
@@ -962,6 +988,25 @@ export function App() {
       loadDepartmentDocuments(selectedDeptId);
     }
   }, [token, selectedDeptId]);
+
+  // Guard against blank screens: automatically reconcile activeTab with permissions
+  useEffect(() => {
+    if (!token || !me) return;
+    if (isPlatformAdmin) {
+      if (activeTab !== 'platform') {
+        setActiveTab('platform');
+        try { window.location.hash = 'tab-platform'; } catch {}
+      }
+    } else {
+      if (activeTab === 'platform') {
+        setActiveTab('chat');
+        try { window.location.hash = 'tab-chat'; } catch {}
+      } else if (activeTab === 'approvals' && !isCompanyAdmin) {
+        setActiveTab('chat');
+        try { window.location.hash = 'tab-chat'; } catch {}
+      }
+    }
+  }, [token, me, isPlatformAdmin, isCompanyAdmin, activeTab]);
 
   // -------------------------------------------------------------------------
   // USER ACTIONS
@@ -1382,7 +1427,16 @@ export function App() {
                   localStorage.setItem('raghub-token', newToken);
                   setToken(newToken);
                   setViewMode('workspace');
-                  window.location.hash = 'workspace';
+                  const hash = window.location.hash.replace('#', '');
+                  let targetTab = 'chat';
+                  if (hash.startsWith('tab-')) {
+                    const req = hash.replace('tab-', '');
+                    if (['chat', 'documents', 'departments', 'approvals', 'audit', 'analytics', 'platform'].includes(req)) {
+                      targetTab = req;
+                    }
+                  }
+                  setActiveTab(targetTab as any);
+                  try { window.location.hash = `tab-${targetTab}`; } catch {}
                 }}
                 onCancel={() => handleSetPublicPage('platform')}
                 theme={theme}
@@ -1422,7 +1476,16 @@ export function App() {
               localStorage.setItem('raghub-token', newToken);
               setToken(newToken);
               setViewMode('workspace');
-              window.location.hash = 'workspace';
+              const hash = window.location.hash.replace('#', '');
+              let targetTab = 'chat';
+              if (hash.startsWith('tab-')) {
+                const req = hash.replace('tab-', '');
+                if (['chat', 'documents', 'departments', 'approvals', 'audit', 'analytics', 'platform'].includes(req)) {
+                  targetTab = req;
+                }
+              }
+              setActiveTab(targetTab as any);
+              try { window.location.hash = `tab-${targetTab}`; } catch {}
             }}
             onCancel={() => handleSetPublicPage('platform')}
             theme={theme}
@@ -1714,10 +1777,18 @@ export function App() {
           </div>
         )}
 
-        {/* ---------------------------------------------------------------- */}
-        {/* TAB 1: KNOWLEDGE CHAT (RAG)                                      */}
-        {/* ---------------------------------------------------------------- */}
-        {activeTab === 'chat' && (
+        {!me ? (
+          <div className="workspace-tab-loading">
+            <RefreshCw size={26} className="spin-icon" style={{ color: 'var(--brand-primary)', marginBottom: '14px' }} />
+            <h3>Initializing Sovereign Enterprise Workspace</h3>
+            <p>Verifying PostgreSQL Row-Level Security session and department boundaries...</p>
+          </div>
+        ) : (
+          <>
+            {/* ---------------------------------------------------------------- */}
+            {/* TAB 1: KNOWLEDGE CHAT (RAG)                                      */}
+            {/* ---------------------------------------------------------------- */}
+            {activeTab === 'chat' && (
           <div className="chat-layout-wrapper">
             {/* Quick Intelligence Launchpad */}
             <div className="quick-launchpad-card">
@@ -2617,30 +2688,52 @@ export function App() {
             {/* Top Team Metrics */}
             <div className="team-metrics-grid">
               <div className="card metric-card">
-                <div className="metric-icon-box" style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6' }}>
+                <div className="metric-icon-box" style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6', border: '1px solid rgba(59, 130, 246, 0.25)' }}>
                   <Users size={22} />
                 </div>
                 <div className="metric-info">
-                  <span className="metric-num">{companyUsers.length}</span>
-                  <span className="metric-text">Total Company Members</span>
+                  <span className="metric-label">Total Company Members</span>
+                  <div className="metric-value-row">
+                    <strong className="metric-number">{companyUsers.length}</strong>
+                    <span className="metric-badge positive">Verified</span>
+                  </div>
+                  <span className="metric-subtext">Acme Corporation Personnel</span>
                 </div>
               </div>
+
               <div className="card metric-card">
-                <div className="metric-icon-box" style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10b981' }}>
+                <div className="metric-icon-box" style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.25)' }}>
                   <Layers size={22} />
                 </div>
                 <div className="metric-info">
-                  <span className="metric-num">{departments.length}</span>
-                  <span className="metric-text">Verified Departments</span>
+                  <span className="metric-label">Verified Departments</span>
+                  <div className="metric-value-row">
+                    <strong className="metric-number">{departments.length}</strong>
+                    <span className="metric-badge neutral">RLS Isolated</span>
+                  </div>
+                  <span className="metric-subtext">PostgreSQL Boundary Enforced</span>
                 </div>
               </div>
+
               <div className="card metric-card">
-                <div className="metric-icon-box" style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b' }}>
+                <div className="metric-icon-box" style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.25)' }}>
                   <Clock size={22} />
                 </div>
                 <div className="metric-info">
-                  <span className="metric-num">{pendingUsers.length + pendingDepartments.length}</span>
-                  <span className="metric-text">Pending Access Requests</span>
+                  <span className="metric-label">Pending Access Requests</span>
+                  <div className="metric-value-row">
+                    <strong className="metric-number">{pendingUsers.length + pendingDepartments.length}</strong>
+                    {pendingUsers.length + pendingDepartments.length > 0 ? (
+                      <span className="metric-badge alert">Action Required</span>
+                    ) : (
+                      <span className="metric-badge positive">All Cleared</span>
+                    )}
+                  </div>
+                  <span className="metric-subtext">
+                    {pendingUsers.length > 0
+                      ? `${pendingUsers.length} employee(s) awaiting approval`
+                      : 'Zero pending approvals'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -3267,6 +3360,27 @@ export function App() {
               )}
             </div>
           </div>
+        )}
+
+        {/* Safety Fallback: If no tab matched or unexpected state, render default view */}
+        {!['chat', 'documents', 'departments', 'analytics', 'audit'].includes(activeTab) &&
+          !(activeTab === 'approvals' && isCompanyAdmin) &&
+          !(activeTab === 'platform' && isPlatformAdmin) && (
+            <div className="card tab-empty-fallback">
+              <Bot size={36} style={{ color: 'var(--brand-primary)', marginBottom: '12px' }} />
+              <h3>Welcome to {me?.companyName || 'RAG Hub Enterprise'}</h3>
+              <p>Opening your Knowledge Copilot...</p>
+              <button
+                type="button"
+                className="btn-primary"
+                style={{ marginTop: '16px' }}
+                onClick={() => switchTab('chat')}
+              >
+                Open Knowledge Chat
+              </button>
+            </div>
+          )}
+          </>
         )}
       </main>
 
