@@ -57,7 +57,8 @@ import {
   PricingPage,
   ContactPage,
   DocsPage,
-  PublicFooter
+  PublicFooter,
+  LegalModal
 } from './public-pages';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
@@ -547,17 +548,27 @@ export function App() {
   const [publicPage, setPublicPage] = useState<'platform' | 'solutions' | 'security' | 'pricing' | 'contact' | 'docs' | 'auth'>(() => {
     try {
       const hash = window.location.hash.replace('#', '');
-      if (['platform', 'solutions', 'security', 'pricing', 'contact', 'docs', 'auth'].includes(hash)) {
-        return hash as any;
+      const [p] = hash.split('/');
+      if (['platform', 'solutions', 'security', 'pricing', 'contact', 'docs', 'auth'].includes(p)) {
+        return p as any;
       }
       const params = new URLSearchParams(window.location.search);
-      const p = params.get('page');
-      if (p && ['platform', 'solutions', 'security', 'pricing', 'contact', 'docs', 'auth'].includes(p)) {
-        return p as any;
+      const qp = params.get('page');
+      if (qp && ['platform', 'solutions', 'security', 'pricing', 'contact', 'docs', 'auth'].includes(qp)) {
+        return qp as any;
       }
     } catch {}
     return 'platform';
   });
+  const [publicSubSection, setPublicSubSection] = useState<string | null>(() => {
+    try {
+      const hash = window.location.hash.replace('#', '');
+      const parts = hash.split('/');
+      if (parts.length > 1) return parts[1];
+    } catch {}
+    return null;
+  });
+  const [legalModalOpen, setLegalModalOpen] = useState<'privacy' | 'terms' | 'sovereignty' | null>(null);
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     try {
       const params = new URLSearchParams(window.location.search);
@@ -574,21 +585,24 @@ export function App() {
 
   useEffect(() => {
     const handleHash = () => {
-      const hash = window.location.hash.replace('#', '');
-      if (['platform', 'solutions', 'security', 'pricing', 'contact', 'docs', 'auth'].includes(hash)) {
-        setPublicPage(hash as any);
+      const raw = window.location.hash.replace('#', '');
+      const [pagePart, subPart] = raw.split('/');
+      if (['platform', 'solutions', 'security', 'pricing', 'contact', 'docs', 'auth'].includes(pagePart)) {
+        setPublicPage(pagePart as any);
+        setPublicSubSection(subPart || null);
         setViewMode('public');
-      } else if (['workspace', 'app'].includes(hash) || hash.startsWith('tab-')) {
+      } else if (['workspace', 'app'].includes(raw) || raw.startsWith('tab-')) {
         if (localStorage.getItem('raghub-token')) {
           setViewMode('workspace');
-          if (hash.startsWith('tab-')) {
-            const t = hash.replace('tab-', '');
+          if (raw.startsWith('tab-')) {
+            const t = raw.replace('tab-', '');
             if (['chat', 'departments', 'documents', 'approvals', 'audit', 'analytics', 'platform'].includes(t)) {
               setActiveTab(t as any);
             }
           }
         } else {
           setPublicPage('auth');
+          setPublicSubSection(null);
           setViewMode('public');
         }
       }
@@ -597,10 +611,14 @@ export function App() {
     return () => window.removeEventListener('hashchange', handleHash);
   }, []);
 
-  const handleSetPublicPage = (page: 'platform' | 'solutions' | 'security' | 'pricing' | 'contact' | 'docs' | 'auth') => {
+  const handleSetPublicPage = (page: 'platform' | 'solutions' | 'security' | 'pricing' | 'contact' | 'docs' | 'auth', subSection?: string) => {
     setPublicPage(page);
+    setPublicSubSection(subSection || null);
     try {
-      window.location.hash = page;
+      window.location.hash = subSection ? `${page}/${subSection}` : page;
+      if (!subSection) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     } catch {}
   };
 
@@ -1351,11 +1369,11 @@ export function App() {
           toggleTheme={toggleTheme}
         />
         <main>
-          {publicPage === 'platform' && <PlatformPage setActivePage={handleSetPublicPage} onOpenAuth={() => handleSetPublicPage('auth')} />}
-          {publicPage === 'solutions' && <SolutionsPage setActivePage={handleSetPublicPage} onOpenAuth={() => handleSetPublicPage('auth')} />}
-          {publicPage === 'security' && <SecurityPage setActivePage={handleSetPublicPage} onOpenAuth={() => handleSetPublicPage('auth')} />}
-          {publicPage === 'pricing' && <PricingPage setActivePage={handleSetPublicPage} onOpenAuth={() => handleSetPublicPage('auth')} />}
-          {publicPage === 'docs' && <DocsPage onOpenAuth={() => handleSetPublicPage('auth')} />}
+          {publicPage === 'platform' && <PlatformPage setActivePage={handleSetPublicPage} onOpenAuth={() => handleSetPublicPage('auth')} subSection={publicSubSection} />}
+          {publicPage === 'solutions' && <SolutionsPage setActivePage={handleSetPublicPage} onOpenAuth={() => handleSetPublicPage('auth')} subSection={publicSubSection} />}
+          {publicPage === 'security' && <SecurityPage setActivePage={handleSetPublicPage} onOpenAuth={() => handleSetPublicPage('auth')} subSection={publicSubSection} />}
+          {publicPage === 'pricing' && <PricingPage setActivePage={handleSetPublicPage} onOpenAuth={() => handleSetPublicPage('auth')} subSection={publicSubSection} />}
+          {publicPage === 'docs' && <DocsPage onOpenAuth={() => handleSetPublicPage('auth')} subSection={publicSubSection} setActivePage={handleSetPublicPage} />}
           {publicPage === 'contact' && <ContactPage onOpenAuth={() => handleSetPublicPage('auth')} />}
           {publicPage === 'auth' && (
             <div className="auth-public-container">
@@ -1373,7 +1391,15 @@ export function App() {
             </div>
           )}
         </main>
-        <PublicFooter setActivePage={handleSetPublicPage} />
+        <PublicFooter
+          setActivePage={handleSetPublicPage}
+          onOpenLegalModal={type => setLegalModalOpen(type)}
+        />
+        <LegalModal
+          activeModal={legalModalOpen}
+          onClose={() => setLegalModalOpen(null)}
+          onSelectModal={t => setLegalModalOpen(t)}
+        />
       </div>
     );
   }
@@ -1403,7 +1429,15 @@ export function App() {
             toggleTheme={toggleTheme}
           />
         </main>
-        <PublicFooter setActivePage={handleSetPublicPage} />
+        <PublicFooter
+          setActivePage={handleSetPublicPage}
+          onOpenLegalModal={type => setLegalModalOpen(type)}
+        />
+        <LegalModal
+          activeModal={legalModalOpen}
+          onClose={() => setLegalModalOpen(null)}
+          onSelectModal={t => setLegalModalOpen(t)}
+        />
       </div>
     );
   }

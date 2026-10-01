@@ -1,4 +1,4 @@
-import React, { useState, type FormEvent } from 'react';
+import React, { useState, useEffect, type FormEvent } from 'react';
 import {
   Shield,
   ShieldCheck,
@@ -31,7 +31,8 @@ import {
   Code,
   Copy,
   Terminal,
-  Download
+  Download,
+  X
 } from 'lucide-react';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
@@ -182,17 +183,30 @@ export function PublicHeader({
 // ---------------------------------------------------------------------------
 export function PlatformPage({
   setActivePage,
-  onOpenAuth
+  onOpenAuth,
+  subSection
 }: {
-  setActivePage: (p: 'platform' | 'solutions' | 'security' | 'pricing' | 'contact' | 'auth') => void;
+  setActivePage: (p: 'platform' | 'solutions' | 'security' | 'pricing' | 'contact' | 'docs' | 'auth', sub?: string) => void;
   onOpenAuth: () => void;
+  subSection?: string | null;
 }) {
   const [sandboxRole, setSandboxRole] = useState<'ops' | 'finance' | 'legal'>('finance');
+
+  useEffect(() => {
+    if (subSection) {
+      setTimeout(() => {
+        const el = document.getElementById(subSection);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 60);
+    }
+  }, [subSection]);
 
   return (
     <div className="public-page-content">
       {/* Hero Section */}
-      <section className="public-hero-section">
+      <section className="public-hero-section" id="platform-overview">
         <div className="hero-glow-backdrop"></div>
         <div className="public-container">
           <div className="hero-eyebrow">
@@ -258,7 +272,7 @@ export function PlatformPage({
       </section>
 
       {/* Interactive Department Boundary Simulator */}
-      <section className="public-section-padded dark-bg">
+      <section className="public-section-padded dark-bg" id="platform-simulator">
         <div className="public-container">
           <div className="section-header-centered">
             <span className="section-pill">Interactive Proof of Concept</span>
@@ -417,7 +431,7 @@ export function PlatformPage({
       </section>
 
       {/* 4 Core Pillars */}
-      <section className="public-section-padded">
+      <section className="public-section-padded" id="platform-pillars">
         <div className="public-container">
           <div className="section-header-centered">
             <span className="section-pill">Enterprise Foundation</span>
@@ -426,7 +440,7 @@ export function PlatformPage({
           </div>
 
           <div className="four-pillars-grid">
-            <div className="pillar-card">
+            <div className="pillar-card" id="platform-pgvector">
               <div className="pillar-icon-box">
                 <Database size={24} />
               </div>
@@ -441,7 +455,7 @@ export function PlatformPage({
               </ul>
             </div>
 
-            <div className="pillar-card">
+            <div className="pillar-card" id="platform-citations">
               <div className="pillar-icon-box">
                 <FileCheck size={24} />
               </div>
@@ -456,7 +470,7 @@ export function PlatformPage({
               </ul>
             </div>
 
-            <div className="pillar-card">
+            <div className="pillar-card" id="platform-briefings">
               <div className="pillar-icon-box">
                 <Sparkles size={24} />
               </div>
@@ -471,7 +485,7 @@ export function PlatformPage({
               </ul>
             </div>
 
-            <div className="pillar-card">
+            <div className="pillar-card" id="platform-compliance">
               <div className="pillar-icon-box">
                 <ShieldCheck size={24} />
               </div>
@@ -490,7 +504,7 @@ export function PlatformPage({
       </section>
 
       {/* Comparison Section */}
-      <section className="public-section-padded dark-bg">
+      <section className="public-section-padded dark-bg" id="platform-comparison">
         <div className="public-container">
           <div className="section-header-centered">
             <span className="section-pill">The Architecture Difference</span>
@@ -574,12 +588,26 @@ export function PlatformPage({
 // ---------------------------------------------------------------------------
 export function SolutionsPage({
   setActivePage,
-  onOpenAuth
+  onOpenAuth,
+  subSection
 }: {
-  setActivePage: (p: 'platform' | 'solutions' | 'security' | 'pricing' | 'contact' | 'auth') => void;
+  setActivePage: (p: 'platform' | 'solutions' | 'security' | 'pricing' | 'contact' | 'docs' | 'auth', sub?: string) => void;
   onOpenAuth: () => void;
+  subSection?: string | null;
 }) {
   const [selectedSolution, setSelectedSolution] = useState<'finance' | 'legal' | 'devops' | 'hr'>('finance');
+
+  useEffect(() => {
+    if (subSection && ['finance', 'legal', 'devops', 'hr'].includes(subSection)) {
+      setSelectedSolution(subSection as any);
+      setTimeout(() => {
+        const el = document.getElementById('solutions-tabs');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 60);
+    }
+  }, [subSection]);
 
   return (
     <div className="public-page-content">
@@ -604,7 +632,7 @@ export function SolutionsPage({
 
       <section className="public-section-padded">
         <div className="public-container">
-          <div className="solutions-tab-row">
+          <div className="solutions-tab-row" id="solutions-tabs">
             <button
               type="button"
               className={`solution-tab-btn ${selectedSolution === 'finance' ? 'active' : ''}`}
@@ -986,14 +1014,27 @@ export function SolutionsPage({
 // ---------------------------------------------------------------------------
 export function SecurityPage({
   setActivePage,
-  onOpenAuth
+  onOpenAuth,
+  subSection
 }: {
-  setActivePage: (p: 'platform' | 'solutions' | 'security' | 'pricing' | 'contact' | 'auth') => void;
+  setActivePage: (p: 'platform' | 'solutions' | 'security' | 'pricing' | 'contact' | 'docs' | 'auth', sub?: string) => void;
   onOpenAuth: () => void;
+  subSection?: string | null;
 }) {
+  useEffect(() => {
+    if (subSection) {
+      setTimeout(() => {
+        const el = document.getElementById(subSection);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 60);
+    }
+  }, [subSection]);
+
   return (
     <div className="public-page-content">
-      <section className="public-hero-section compact">
+      <section className="public-hero-section compact" id="security-overview">
         <div className="public-container">
           <div className="hero-eyebrow">
             <span className="eyebrow-badge">
@@ -1013,7 +1054,7 @@ export function SecurityPage({
       </section>
 
       {/* 5-Layer Security Model */}
-      <section className="public-section-padded">
+      <section className="public-section-padded" id="security-layers">
         <div className="public-container">
           <div className="section-header-centered">
             <span className="section-pill">Defense in Depth</span>
@@ -1081,7 +1122,7 @@ export function SecurityPage({
       </section>
 
       {/* Security Principles & Guarantees */}
-      <section className="public-section-padded dark-bg">
+      <section className="public-section-padded dark-bg" id="security-guarantees">
         <div className="public-container">
           <div className="section-header-centered">
             <span className="section-pill">Guarantees</span>
@@ -1118,7 +1159,7 @@ export function SecurityPage({
       </section>
 
       {/* RBAC Matrix Overview */}
-      <section className="public-section-padded">
+      <section className="public-section-padded" id="security-rbac">
         <div className="public-container">
           <div className="section-header-centered">
             <span className="section-pill">Governance</span>
@@ -1187,14 +1228,27 @@ export function SecurityPage({
 // ---------------------------------------------------------------------------
 export function PricingPage({
   setActivePage,
-  onOpenAuth
+  onOpenAuth,
+  subSection
 }: {
-  setActivePage: (p: 'platform' | 'solutions' | 'security' | 'pricing' | 'contact' | 'auth') => void;
+  setActivePage: (p: 'platform' | 'solutions' | 'security' | 'pricing' | 'contact' | 'docs' | 'auth', sub?: string) => void;
   onOpenAuth: () => void;
+  subSection?: string | null;
 }) {
+  useEffect(() => {
+    if (subSection) {
+      setTimeout(() => {
+        const el = document.getElementById(subSection);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 60);
+    }
+  }, [subSection]);
+
   return (
     <div className="public-page-content">
-      <section className="public-hero-section compact">
+      <section className="public-hero-section compact" id="pricing-overview">
         <div className="public-container">
           <div className="hero-eyebrow">
             <span className="eyebrow-badge">
@@ -1213,7 +1267,7 @@ export function PricingPage({
       </section>
 
       {/* Pricing Cards Grid */}
-      <section className="public-section-padded">
+      <section className="public-section-padded" id="pricing-plans">
         <div className="public-container">
           <div className="pricing-cards-grid">
             {/* Tier 1 */}
@@ -1313,7 +1367,7 @@ export function PricingPage({
       </section>
 
       {/* Enterprise FAQ */}
-      <section className="public-section-padded dark-bg">
+      <section className="public-section-padded dark-bg" id="pricing-faq">
         <div className="public-container">
           <div className="section-header-centered">
             <span className="section-pill">Questions & Answers</span>
@@ -1593,9 +1647,29 @@ export function ContactPage({
 // ---------------------------------------------------------------------------
 // PUBLIC DOCUMENTATION & DEVELOPER API PAGE
 // ---------------------------------------------------------------------------
-export function DocsPage({ onOpenAuth }: { onOpenAuth: () => void }) {
+export function DocsPage({
+  onOpenAuth,
+  subSection,
+  setActivePage
+}: {
+  onOpenAuth: () => void;
+  subSection?: string | null;
+  setActivePage?: (p: 'platform' | 'solutions' | 'security' | 'pricing' | 'contact' | 'docs' | 'auth', sub?: string) => void;
+}) {
   const [activeSection, setActiveSection] = useState<'architecture' | 'retrieval' | 'ingestion' | 'rbac' | 'api' | 'compliance'>('architecture');
   const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (subSection && ['architecture', 'retrieval', 'ingestion', 'rbac', 'api', 'compliance'].includes(subSection)) {
+      setActiveSection(subSection as any);
+      setTimeout(() => {
+        const el = document.querySelector('.docs-content-panel');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 60);
+    }
+  }, [subSection]);
 
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
@@ -1948,13 +2022,14 @@ LIMIT 5;`}
                 </div>
 
                 <h3>1. User Authentication (`POST /api/auth/login`)</h3>
+                <p>Authenticates an employee and issues a signed JWT containing tenant and department boundary claims.</p>
                 <div className="docs-code-container">
                   <div className="code-header">
                     <span className="code-lang">cURL Example</span>
                     <button
                       type="button"
                       className="btn-copy-code"
-                      onClick={() => copyToClipboard(`curl -X POST http://localhost:4000/api/auth/login \\\n  -H "Content-Type: application/json" \\\n  -d '{"email":"admin@acme.demo","password":"demo-password","tenantSlug":"acme"}'`, 'curl-login')}
+                      onClick={() => copyToClipboard(`curl -X POST http://localhost:4000/api/auth/login \\\n  -H "Content-Type: application/json" \\\n  -d '{"companySlug":"acme","email":"ops@acme.demo","password":"demo-password"}'`, 'curl-login')}
                     >
                       {copiedId === 'curl-login' ? <Check size={13} /> : <Copy size={13} />}
                       <span>{copiedId === 'curl-login' ? 'Copied' : 'Copy'}</span>
@@ -1964,21 +2039,22 @@ LIMIT 5;`}
 {`curl -X POST http://localhost:4000/api/auth/login \\
   -H "Content-Type: application/json" \\
   -d '{
-    "email": "admin@acme.demo",
-    "password": "demo-password",
-    "tenantSlug": "acme"
+    "companySlug": "acme",
+    "email": "ops@acme.demo",
+    "password": "demo-password"
   }'`}
                   </pre>
                 </div>
 
-                <h3>2. Grounded RAG Query (`POST /api/query/rag`)</h3>
+                <h3>2. Grounded RAG Query (`POST /api/rag/query`)</h3>
+                <p>Executes a hybrid semantic vector query against authorized department documents with inline citations.</p>
                 <div className="docs-code-container">
                   <div className="code-header">
                     <span className="code-lang">Python (requests)</span>
                     <button
                       type="button"
                       className="btn-copy-code"
-                      onClick={() => copyToClipboard(`import requests\n\nheaders = {\n    "Authorization": "Bearer <YOUR_JWT_TOKEN>",\n    "Content-Type": "application/json"\n}\n\npayload = {\n    "question": "What is the per diem travel meal allowance?",\n    "departmentId": "c8d0a0b1-1234-5678-abcd-000000000001",\n    "searchMode": "hybrid"\n}\n\nresponse = requests.post("http://localhost:4000/api/query/rag", json=payload, headers=headers)\nprint(response.json())`, 'py-query')}
+                      onClick={() => copyToClipboard(`import requests\n\nheaders = {\n    "Authorization": "Bearer <YOUR_JWT_TOKEN>",\n    "Content-Type": "application/json"\n}\n\npayload = {\n    "question": "What is our incident response SLA for Sev-1 outages?",\n    "departmentId": "00000000-0000-0000-0000-000000000011",\n    "searchMode": "hybrid"\n}\n\nresponse = requests.post("http://localhost:4000/api/rag/query", json=payload, headers=headers)\ndata = response.json()\nprint("Answer:", data["answer"])\nfor citation in data.get("citations", []):\n    print(f"- Source: {citation['title']} (Score: {citation['score']})")`, 'py-query')}
                     >
                       {copiedId === 'py-query' ? <Check size={13} /> : <Copy size={13} />}
                       <span>{copiedId === 'py-query' ? 'Copied' : 'Copy'}</span>
@@ -1993,27 +2069,28 @@ headers = {
 }
 
 payload = {
-    "question": "What is the per diem travel meal allowance?",
-    "departmentId": "c8d0a0b1-1234-5678-abcd-000000000001",
+    "question": "What is our incident response SLA for Sev-1 outages?",
+    "departmentId": "00000000-0000-0000-0000-000000000011",
     "searchMode": "hybrid"
 }
 
-response = requests.post("http://localhost:4000/api/query/rag", json=payload, headers=headers)
+response = requests.post("http://localhost:4000/api/rag/query", json=payload, headers=headers)
 data = response.json()
 print("Answer:", data["answer"])
-for citation in data["citations"]:
+for citation in data.get("citations", []):
     print(f"- Source: {citation['title']} (Score: {citation['score']})")`}
                   </pre>
                 </div>
 
                 <h3>3. Document Upload (`POST /api/documents/upload`)</h3>
+                <p>Ingests a file, calculates SHA-256 deduplication hashes, and indexes vectors into pgvector.</p>
                 <div className="docs-code-container">
                   <div className="code-header">
                     <span className="code-lang">cURL Multipart Upload</span>
                     <button
                       type="button"
                       className="btn-copy-code"
-                      onClick={() => copyToClipboard(`curl -X POST http://localhost:4000/api/documents/upload \\\n  -H "Authorization: Bearer <TOKEN>" \\\n  -F "file=@/path/to/security-policy.pdf" \\\n  -F "departmentId=c8d0a0b1-1234-5678-abcd-000000000001" \\\n  -F "classification=confidential"`, 'curl-upload')}
+                      onClick={() => copyToClipboard(`curl -X POST http://localhost:4000/api/documents/upload \\\n  -H "Authorization: Bearer <TOKEN>" \\\n  -F "file=@/path/to/security-policy.pdf" \\\n  -F "departmentId=00000000-0000-0000-0000-000000000011" \\\n  -F "classification=internal"`, 'curl-upload')}
                     >
                       {copiedId === 'curl-upload' ? <Check size={13} /> : <Copy size={13} />}
                       <span>{copiedId === 'curl-upload' ? 'Copied' : 'Copy'}</span>
@@ -2023,8 +2100,50 @@ for citation in data["citations"]:
 {`curl -X POST http://localhost:4000/api/documents/upload \\
   -H "Authorization: Bearer <TOKEN>" \\
   -F "file=@/path/to/security-policy.pdf" \\
-  -F "departmentId=c8d0a0b1-1234-5678-abcd-000000000001" \\
-  -F "classification=confidential"`}
+  -F "departmentId=00000000-0000-0000-0000-000000000011" \\
+  -F "classification=internal"`}
+                  </pre>
+                </div>
+
+                <h3>4. Department Isolation Catalog (`GET /api/departments/catalog`)</h3>
+                <p>Retrieves all organization departments with dynamic <code>authorized: boolean</code> boundary flags.</p>
+                <div className="docs-code-container">
+                  <pre className="code-content">
+{`curl -X GET http://localhost:4000/api/departments/catalog \\
+  -H "Authorization: Bearer <TOKEN>"`}
+                  </pre>
+                </div>
+
+                <h3>5. Team Roster & RBAC Management (`GET /api/admin/users`)</h3>
+                <p>Tenant Admin endpoint returning company users, assigned roles, and linked department objects.</p>
+                <div className="docs-code-container">
+                  <pre className="code-content">
+{`curl -X GET http://localhost:4000/api/admin/users \\
+  -H "Authorization: Bearer <ADMIN_TOKEN>"`}
+                  </pre>
+                </div>
+
+                <h3>6. Update User Role & Boundaries (`PATCH /api/admin/users/:userId`)</h3>
+                <p>Promotes/demotes user role and reassigns department scopes with immutable audit logging.</p>
+                <div className="docs-code-container">
+                  <pre className="code-content">
+{`curl -X PATCH http://localhost:4000/api/admin/users/00000000-0000-0000-0000-000000000102 \\
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "role": "department_admin",
+    "departmentIds": ["00000000-0000-0000-0000-000000000011"],
+    "approvalStatus": "approved"
+  }'`}
+                  </pre>
+                </div>
+
+                <h3>7. Export SOC 2 Audit Telemetry (`GET /api/audit/export`)</h3>
+                <p>Downloads complete JSON cryptographic audit logs for compliance officers and external auditors.</p>
+                <div className="docs-code-container">
+                  <pre className="code-content">
+{`curl -X GET http://localhost:4000/api/audit/export \\
+  -H "Authorization: Bearer <ADMIN_TOKEN>"`}
                   </pre>
                 </div>
               </div>
@@ -2108,17 +2227,217 @@ for citation in data["citations"]:
 }
 
 // ---------------------------------------------------------------------------
-// PUBLIC FOOTER
+// ENTERPRISE LEGAL & POLICY MODAL
+// ---------------------------------------------------------------------------
+export function LegalModal({
+  activeModal,
+  onClose,
+  onSelectModal
+}: {
+  activeModal: 'privacy' | 'terms' | 'sovereignty' | null;
+  onClose: () => void;
+  onSelectModal: (type: 'privacy' | 'terms' | 'sovereignty') => void;
+}) {
+  if (!activeModal) return null;
+
+  return (
+    <div className="modal-backdrop" onClick={onClose} style={{ zIndex: 12000 }}>
+      <div className="modal-card legal-modal-card" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <div className="legal-tabs-header">
+            <button
+              type="button"
+              className={`legal-tab-btn ${activeModal === 'privacy' ? 'active' : ''}`}
+              onClick={() => onSelectModal('privacy')}
+            >
+              <Lock size={15} />
+              <span>Privacy & Security Policy</span>
+            </button>
+            <button
+              type="button"
+              className={`legal-tab-btn ${activeModal === 'terms' ? 'active' : ''}`}
+              onClick={() => onSelectModal('terms')}
+            >
+              <FileText size={15} />
+              <span>Terms of Service & SLA</span>
+            </button>
+            <button
+              type="button"
+              className={`legal-tab-btn ${activeModal === 'sovereignty' ? 'active' : ''}`}
+              onClick={() => onSelectModal('sovereignty')}
+            >
+              <ShieldCheck size={15} />
+              <span>Sovereign Data Guarantee</span>
+            </button>
+          </div>
+          <button type="button" className="btn-icon" onClick={onClose} title="Close Dialog">
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="modal-body legal-modal-body">
+          {activeModal === 'privacy' && (
+            <div className="legal-doc-content">
+              <div className="legal-badge-pill">PRIVACY & DATA PROTECTION STANDARDS</div>
+              <h2>Enterprise Privacy & Security Policy</h2>
+              <p className="legal-intro">
+                Last Updated: October 2026 · Standard SOC 2 Type II, ISO/IEC 27001, and GDPR Aligned
+              </p>
+
+              <div className="legal-section">
+                <h4>1. Zero Customer Data Retention on Large Language Models</h4>
+                <p>
+                  RAG Hub Enterprise operates under strict zero-retention enterprise agreements. 
+                  When vector chunks and user prompts are submitted for inference (via hardware-accelerated Groq LPU endpoints or private LLM instances), 
+                  transferred prompts and synthesized outputs are processed ephemerally in volatile memory. 
+                  Your proprietary contracts, financial spreadsheets, source code, and employee records are <strong>never stored, logged, or used to train public or foundational AI models</strong>.
+                </p>
+              </div>
+
+              <div className="legal-section">
+                <h4>2. Kernel-Enforced Multi-Tenant Database Isolation</h4>
+                <p>
+                  Unlike standard vector software wrappers that rely on application-level filtering, 
+                  RAG Hub segregates all corporate data at the database storage engine. Every connection operates inside a transactional scope enforcing PostgreSQL 16 Row-Level Security (<code className="code-tag">app.tenant_id</code>). 
+                  Access across tenant boundaries is physically rejected by the database kernel.
+                </p>
+              </div>
+
+              <div className="legal-section">
+                <h4>3. Departmental Scopes & Zero Internal Leakage</h4>
+                <p>
+                  Employees belong to verified department memberships. Retrieval queries and document libraries are strictly constrained to authorized scopes (<code className="code-tag">WHERE department_id = ANY(session.departments)</code>). 
+                  Non-administrative employees in Operations can never retrieve or inspect documents belonging to Finance or Legal.
+                </p>
+              </div>
+
+              <div className="legal-section">
+                <h4>4. Cookie & Local Storage Policy</h4>
+                <p>
+                  RAG Hub Enterprise employs zero third-party marketing, analytics, or behavioral tracking cookies. 
+                  Client-side storage is restricted exclusively to essential authentication session tokens (<code className="code-tag">raghub-token</code>) and visual theme preferences (Light / Dark mode).
+                </p>
+              </div>
+
+              <div className="legal-section">
+                <h4>5. GDPR Right to Erasure & Data Sovereignty</h4>
+                <p>
+                  Customers maintain full sovereignty over their knowledge base. Document deletions execute cascading transactions that immediately purge document metadata, raw text extractions, and 1536-dimensional vector embeddings from disk.
+                </p>
+              </div>
+
+              <div className="legal-contact-callout">
+                <strong>Data Protection Office Contact:</strong> For inquiries or Data Processing Addendum (DPA) execution, contact{' '}
+                <a href="mailto:enterprise.raghub@gmail.com">enterprise.raghub@gmail.com</a>.
+              </div>
+            </div>
+          )}
+
+          {activeModal === 'terms' && (
+            <div className="legal-doc-content">
+              <div className="legal-badge-pill">MASTER SERVICE AGREEMENT & SLA</div>
+              <h2>Enterprise Terms of Service & SLA Commitment</h2>
+              <p className="legal-intro">
+                Enterprise Commercial Terms · Applicable to Cloud, Private VPC, and On-Premise Deployments
+              </p>
+
+              <div className="legal-section">
+                <h4>1. Service Level Agreement (99.95% Availability)</h4>
+                <p>
+                  RAG Hub Enterprise guarantees a monthly service availability of <strong>99.95%</strong> for all hosted and managed private cloud deployments. 
+                  In the event of an unscheduled outage exceeding the SLA threshold, enterprise customers are entitled to contractual service credits calculated proportionally against monthly billing.
+                </p>
+              </div>
+
+              <div className="legal-section">
+                <h4>2. Intellectual Property Ownership</h4>
+                <p>
+                  The customer retains 100% exclusive, worldwide intellectual property ownership of all source files uploaded, vector embeddings calculated, metadata generated, and RAG synthesis completions produced by your workspace. 
+                  RAG Hub claims zero rights or ownership over customer proprietary intelligence.
+                </p>
+              </div>
+
+              <div className="legal-section">
+                <h4>3. Deployment Sovereignty & Air-Gapped Licensing</h4>
+                <p>
+                  Enterprise licenses grant full rights to deploy RAG Hub within customer-owned AWS, GCP, or Azure Virtual Private Clouds (VPC), or air-gapped on-premise Kubernetes clusters. 
+                  Air-gapped installations operate autonomously without outbound internet telemetry requirements.
+                </p>
+              </div>
+
+              <div className="legal-section">
+                <h4>4. Cryptographic SOC 2 Audit Telemetry</h4>
+                <p>
+                  All authentication attempts, document ingestions, query executions, and administrative permission changes are permanently recorded in an append-only audit trail. 
+                  Compliance officers can export full cryptographic audit telemetry in standard JSON and CSV formats at any time.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {activeModal === 'sovereignty' && (
+            <div className="legal-doc-content">
+              <div className="legal-badge-pill">DATA SOVEREIGNTY CHARTER</div>
+              <h2>Sovereign Data Guarantee & Kernel Security</h2>
+              <p className="legal-intro">
+                Our Contractual Commitment to Chief Information Security Officers (CISOs)
+              </p>
+
+              <div className="legal-section">
+                <h4>1. Double-Gated Security Architecture</h4>
+                <p>
+                  Every request submitted to RAG Hub must pass two independent, verifiable security gates:
+                </p>
+                <ul className="pillar-list" style={{ marginTop: '10px' }}>
+                  <li><Check size={14} /> <strong>Gate 1 (API Middleware):</strong> Validates JWT cryptographic signatures, verifies active database approval, and enforces relational department filtering.</li>
+                  <li><Check size={14} /> <strong>Gate 2 (PostgreSQL 16 RLS):</strong> Transaction-scoped session context (<code className="code-tag">SET LOCAL app.tenant_id</code>) ensures unauthorized vectors are dropped inside the database kernel.</li>
+                </ul>
+              </div>
+
+              <div className="legal-section">
+                <h4>2. Hallucination-Free Inline Source Provenance</h4>
+                <p>
+                  All synthetic completions are strictly bounded by authorized source vectors. 
+                  The inference engine appends verified inline citations (<code className="code-tag">[1]</code>) pointing to the exact document title, byte offset, and cosine match score.
+                </p>
+              </div>
+
+              <div className="legal-section">
+                <h4>3. Incident Response & 24/7 Security Hotline</h4>
+                <p>
+                  Enterprise customers receive dedicated incident response support with a 15-minute SLA for Sev-1 security events. 
+                  Inquiries: <a href="mailto:enterprise.raghub@gmail.com">enterprise.raghub@gmail.com</a>.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="modal-footer">
+          <button type="button" className="btn-primary" onClick={onClose}>
+            Acknowledge & Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// PUBLIC FOOTER (5-COLUMN ENTERPRISE LAYOUT WITH DIRECT DEEP MAPPING)
 // ---------------------------------------------------------------------------
 export function PublicFooter({
-  setActivePage
+  setActivePage,
+  onOpenLegalModal
 }: {
-  setActivePage: (p: 'platform' | 'solutions' | 'security' | 'pricing' | 'contact' | 'docs' | 'auth') => void;
+  setActivePage: (p: 'platform' | 'solutions' | 'security' | 'pricing' | 'contact' | 'docs' | 'auth', subSection?: string) => void;
+  onOpenLegalModal?: (type: 'privacy' | 'terms' | 'sovereignty') => void;
 }) {
   return (
     <footer className="public-footer">
       <div className="public-container">
         <div className="footer-top-grid">
+          {/* Col 1: Brand & Compliance */}
           <div className="footer-brand-col">
             <div className="public-nav-brand">
               <div className="brand-logo-gem">
@@ -2131,57 +2450,97 @@ export function PublicFooter({
             </div>
             <p className="footer-tagline">
               Sovereign Multi-Tenant Retrieval-Augmented Generation. 
-              Engineered on PostgreSQL 16 + pgvector with native Row-Level Security.
+              Engineered on PostgreSQL 16 + pgvector with kernel-level Row-Level Security.
             </p>
             <div className="footer-compliance-badges">
               <span className="comp-badge">SOC 2 Type II</span>
               <span className="comp-badge">ISO 27001</span>
               <span className="comp-badge">GDPR Ready</span>
               <span className="comp-badge">HIPAA Aligned</span>
+              <span className="comp-badge">Zero Retention</span>
+            </div>
+            <div style={{ marginTop: '16px' }}>
+              <a
+                href="mailto:enterprise.raghub@gmail.com"
+                style={{ color: 'var(--brand-primary)', textDecoration: 'none', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+              >
+                <Mail size={14} />
+                <span>enterprise.raghub@gmail.com</span>
+              </a>
             </div>
           </div>
 
+          {/* Col 2: Platform Architecture */}
           <div className="footer-links-col">
             <h5>Platform</h5>
             <ul>
-              <li><button type="button" onClick={() => setActivePage('platform')}>Architecture Overview</button></li>
-              <li><button type="button" onClick={() => setActivePage('platform')}>pgvector & RLS</button></li>
-              <li><button type="button" onClick={() => setActivePage('platform')}>Grounded LLM Citations</button></li>
-              <li><button type="button" onClick={() => setActivePage('platform')}>Executive Briefings</button></li>
+              <li><button type="button" onClick={() => setActivePage('platform', 'platform-overview')}>Architecture Overview</button></li>
+              <li><button type="button" onClick={() => setActivePage('platform', 'platform-pgvector')}>PostgreSQL 16 & pgvector</button></li>
+              <li><button type="button" onClick={() => setActivePage('platform', 'platform-simulator')}>Kernel RLS Simulator</button></li>
+              <li><button type="button" onClick={() => setActivePage('platform', 'platform-citations')}>Grounded LLM Citations</button></li>
+              <li><button type="button" onClick={() => setActivePage('platform', 'platform-briefings')}>Executive Briefings</button></li>
+              <li><button type="button" onClick={() => setActivePage('platform', 'platform-comparison')}>Enterprise Comparison</button></li>
             </ul>
           </div>
 
+          {/* Col 3: Department Solutions */}
           <div className="footer-links-col">
             <h5>Solutions</h5>
             <ul>
-              <li><button type="button" onClick={() => setActivePage('solutions')}>Finance & Spend Governance</button></li>
-              <li><button type="button" onClick={() => setActivePage('solutions')}>Legal & IP Compliance</button></li>
-              <li><button type="button" onClick={() => setActivePage('solutions')}>Engineering Runbooks</button></li>
-              <li><button type="button" onClick={() => setActivePage('solutions')}>HR Employee Policies</button></li>
+              <li><button type="button" onClick={() => setActivePage('solutions', 'finance')}>Finance & Spend Governance</button></li>
+              <li><button type="button" onClick={() => setActivePage('solutions', 'legal')}>Legal, Risk & IP Compliance</button></li>
+              <li><button type="button" onClick={() => setActivePage('solutions', 'devops')}>Engineering Runbooks</button></li>
+              <li><button type="button" onClick={() => setActivePage('solutions', 'hr')}>HR Employee Policies</button></li>
+              <li><button type="button" onClick={() => setActivePage('security', 'security-rbac')}>Department Boundary Matrix</button></li>
             </ul>
           </div>
 
+          {/* Col 4: Technical Documentation */}
           <div className="footer-links-col">
-            <h5>Enterprise & Trust</h5>
+            <h5>Developer Docs</h5>
             <ul>
-              <li><button type="button" onClick={() => setActivePage('security')}>Security Trust Center</button></li>
-              <li><button type="button" onClick={() => setActivePage('pricing')}>Pricing & Tiers</button></li>
-              <li><button type="button" onClick={() => setActivePage('docs')}>Developer Documentation & API</button></li>
-              <li><button type="button" onClick={() => setActivePage('contact')}>Contact Enterprise Sales</button></li>
-              <li><button type="button" onClick={() => setActivePage('auth')}>Sandbox Sign In</button></li>
-              <li><a href="mailto:enterprise.raghub@gmail.com" style={{ color: 'var(--brand-primary)', textDecoration: 'none', fontSize: '13px' }}>enterprise.raghub@gmail.com</a></li>
+              <li><button type="button" onClick={() => setActivePage('docs', 'architecture')}>Platform Architecture Spec</button></li>
+              <li><button type="button" onClick={() => setActivePage('docs', 'retrieval')}>Hybrid Vector Search & RRF</button></li>
+              <li><button type="button" onClick={() => setActivePage('docs', 'ingestion')}>Document Ingestion Pipeline</button></li>
+              <li><button type="button" onClick={() => setActivePage('docs', 'rbac')}>Multi-Tenant RBAC Guide</button></li>
+              <li><button type="button" onClick={() => setActivePage('docs', 'api')}>REST API Reference</button></li>
+              <li><button type="button" onClick={() => setActivePage('docs', 'compliance')}>SOC 2 Audit Telemetry</button></li>
+            </ul>
+          </div>
+
+          {/* Col 5: Enterprise & Trust */}
+          <div className="footer-links-col">
+            <h5>Trust & Company</h5>
+            <ul>
+              <li><button type="button" onClick={() => setActivePage('security', 'security-layers')}>Security Trust Center</button></li>
+              <li><button type="button" onClick={() => setActivePage('security', 'security-guarantees')}>Sovereign Data Guarantee</button></li>
+              <li><button type="button" onClick={() => setActivePage('pricing', 'pricing-plans')}>Enterprise Pricing & SLA</button></li>
+              <li><button type="button" onClick={() => setActivePage('pricing', 'pricing-faq')}>Enterprise FAQ</button></li>
+              <li><button type="button" onClick={() => setActivePage('contact')}>Contact Solutions Team</button></li>
+              <li><button type="button" onClick={() => setActivePage('auth')}>Sandbox Platform Login</button></li>
             </ul>
           </div>
         </div>
 
+        {/* Footer Bottom Bar with Interactive Legal & Policy Modals */}
         <div className="footer-bottom-bar">
           <p>© {new Date().getFullYear()} RAG Hub Enterprise Systems Inc. All rights reserved.</p>
           <div className="footer-legal-links">
-            <span>Sovereignty Guaranteed</span>
+            <button type="button" onClick={() => onOpenLegalModal?.('privacy')}>
+              Privacy & Security Policy
+            </button>
             <span>•</span>
-            <span>Zero Public Training</span>
+            <button type="button" onClick={() => onOpenLegalModal?.('terms')}>
+              Terms of Service & SLA
+            </button>
             <span>•</span>
-            <span>PostgreSQL Native RLS</span>
+            <button type="button" onClick={() => onOpenLegalModal?.('sovereignty')}>
+              Sovereign Data Guarantee
+            </button>
+            <span>•</span>
+            <a href="mailto:enterprise.raghub@gmail.com">
+              enterprise.raghub@gmail.com
+            </a>
           </div>
         </div>
       </div>
