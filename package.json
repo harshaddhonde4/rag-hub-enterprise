@@ -1,0 +1,14 @@
+{
+  "name": "rag-hub",
+  "private": true,
+  "workspaces": ["apps/*"],
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w @rag-hub/api\" \"npm run dev -w @rag-hub/web\"",
+    "build": "npm run build --workspaces",
+    "start": "npm run start -w @rag-hub/api",
+    "db:up": "docker compose up -d db",
+    "db:migrate": "psql \"$DATABASE_URL\" -f apps/api/sql/001_init.sql -f apps/api/sql/003_registration_workflow.sql -f apps/api/sql/004_department_approval.sql -f apps/api/sql/005_document_summaries.sql",
+    "db:seed": "npm run db:seed -w @rag-hub/api"
+  },
+  "devDependencies": { "concurrently": "^9.1.2" }
+}

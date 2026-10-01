@@ -1,0 +1,7 @@
+node_modules
+apps/*/node_modules
+apps/*/dist
+work
+outputs
+.git
+.env

@@ -1,0 +1,31 @@
+# Secrets and environment variables
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs & caches
+dist/
+apps/*/dist/
+build/
+*.tsbuildinfo
+.cache/
+
+# Operating system files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+
+# Logs and temporary artifacts
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+outputs/
