@@ -3556,7 +3556,7 @@ func main() {
             {/* Top Overview Cards */}
             <div className="dev-metrics-grid">
               <div className="metric-card card">
-                <div className="metric-icon-box" style={{ background: 'rgba(99, 102, 241, 0.15)', color: '#818cf8', border: '1px solid rgba(99, 102, 241, 0.3)' }}>
+                <div className="metric-icon-box dev-icon-indigo">
                   <KeyRound size={22} />
                 </div>
                 <div className="metric-info">
@@ -3570,7 +3570,7 @@ func main() {
               </div>
 
               <div className="metric-card card">
-                <div className="metric-icon-box" style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+                <div className="metric-icon-box dev-icon-green">
                   <Radio size={22} />
                 </div>
                 <div className="metric-info">
@@ -3584,7 +3584,7 @@ func main() {
               </div>
 
               <div className="metric-card card">
-                <div className="metric-icon-box" style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
+                <div className="metric-icon-box dev-icon-amber">
                   <Zap size={22} />
                 </div>
                 <div className="metric-info">
@@ -3966,7 +3966,7 @@ func main() {
             {/* Top SLA & Reliability Grid */}
             <div className="sla-metrics-grid">
               <div className="metric-card card">
-                <div className="metric-icon-box" style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+                <div className="metric-icon-box dev-icon-green">
                   <ShieldCheck size={22} />
                 </div>
                 <div className="metric-info">
@@ -3980,7 +3980,7 @@ func main() {
               </div>
 
               <div className="metric-card card">
-                <div className="metric-icon-box" style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6', border: '1px solid rgba(59, 130, 246, 0.3)' }}>
+                <div className="metric-icon-box dev-icon-blue">
                   <Activity size={22} />
                 </div>
                 <div className="metric-info">
@@ -3994,7 +3994,7 @@ func main() {
               </div>
 
               <div className="metric-card card">
-                <div className="metric-icon-box" style={{ background: 'rgba(168, 85, 247, 0.15)', color: '#a855f7', border: '1px solid rgba(168, 85, 247, 0.3)' }}>
+                <div className="metric-icon-box dev-icon-purple">
                   <Clock size={22} />
                 </div>
                 <div className="metric-info">
@@ -4008,7 +4008,7 @@ func main() {
               </div>
 
               <div className="metric-card card">
-                <div className="metric-icon-box" style={{ background: 'rgba(236, 72, 153, 0.15)', color: '#ec4899', border: '1px solid rgba(236, 72, 153, 0.3)' }}>
+                <div className="metric-icon-box dev-icon-pink">
                   <Cpu size={22} />
                 </div>
                 <div className="metric-info">

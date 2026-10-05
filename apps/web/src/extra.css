@@ -3292,46 +3292,43 @@
   align-items: center;
 }
 
-/* Light Mode Overrides for Developer / Observability */
-[data-theme="light"] .playground-output-col {
-  background: #f8fafc;
-  border-color: #e2e8f0;
+.metric-icon-box.dev-icon-indigo {
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
+  border: 1px solid rgba(99, 102, 241, 0.3);
 }
 
-[data-theme="light"] .playground-output-header {
-  background: #edf2f7;
-  border-bottom-color: #e2e8f0;
+.metric-icon-box.dev-icon-green {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
-[data-theme="light"] .playground-terminal {
-  color: #0f172a;
+.metric-icon-box.dev-icon-amber {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
-[data-theme="light"] .terminal-code {
-  color: #0369a1;
+.metric-icon-box.dev-icon-blue {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
-[data-theme="light"] .code-snippet-box {
-  background: #1e293b;
-  border-color: #334155;
+.metric-icon-box.dev-icon-purple {
+  background: rgba(168, 85, 247, 0.15);
+  color: #a855f7;
+  border: 1px solid rgba(168, 85, 247, 0.3);
 }
 
-[data-theme="light"] .snippet-toolbar {
-  background: #0f172a;
-  border-bottom-color: #334155;
+.metric-icon-box.dev-icon-pink {
+  background: rgba(236, 72, 153, 0.15);
+  color: #ec4899;
+  border: 1px solid rgba(236, 72, 153, 0.3);
 }
 
-[data-theme="light"] .url-code {
-  background: #e0f2fe;
-  color: #0284c7;
-}
-
-[data-theme="light"] .scope-tag {
-  background: #e0e7ff;
-  color: #4338ca;
-  border-color: #c7d2fe;
-}
-
+/* Scopes Selection in Modals */
 .scopes-selection-list {
   display: flex;
   flex-direction: column;
@@ -3369,8 +3366,159 @@
   font-size: 13px;
   background: #090d12;
   color: #38bdf8;
-  border-color: #1a2533;
+  border: 1px solid #1a2533;
 }
+
+/* ------------------------------------------------------------------------- */
+/* Light Mode Overrides for Developer / Observability / Audit SDLC Features  */
+/* ------------------------------------------------------------------------- */
+[data-theme="light"] .metric-icon-box.dev-icon-indigo {
+  background: #eef2ff !important;
+  color: #4338ca !important;
+  border-color: #c7d2fe !important;
+}
+
+[data-theme="light"] .metric-icon-box.dev-icon-green {
+  background: #ecfdf5 !important;
+  color: #047857 !important;
+  border-color: #a7f3d0 !important;
+}
+
+[data-theme="light"] .metric-icon-box.dev-icon-amber {
+  background: #fffbeb !important;
+  color: #b45309 !important;
+  border-color: #fde68a !important;
+}
+
+[data-theme="light"] .metric-icon-box.dev-icon-blue {
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+  border-color: #bfdbfe !important;
+}
+
+[data-theme="light"] .metric-icon-box.dev-icon-purple {
+  background: #faf5ff !important;
+  color: #7e22ce !important;
+  border-color: #e9d5ff !important;
+}
+
+[data-theme="light"] .metric-icon-box.dev-icon-pink {
+  background: #fdf2f8 !important;
+  color: #be185d !important;
+  border-color: #fbcfe8 !important;
+}
+
+[data-theme="light"] .playground-output-col {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+[data-theme="light"] .playground-output-header {
+  background: #f1f5f9;
+  border-bottom-color: #e2e8f0;
+}
+
+[data-theme="light"] .output-title {
+  color: #475569;
+}
+
+[data-theme="light"] .playground-terminal {
+  color: #0f172a;
+}
+
+[data-theme="light"] .terminal-code {
+  color: #0369a1;
+}
+
+[data-theme="light"] .terminal-placeholder {
+  color: #64748b;
+}
+
+[data-theme="light"] .code-snippet-box {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+[data-theme="light"] .snippet-toolbar {
+  background: #020617;
+  border-bottom-color: #1e293b;
+}
+
+[data-theme="light"] .url-code {
+  background: #e0f2fe;
+  color: #0284c7;
+  border: 1px solid #bae6fd;
+}
+
+[data-theme="light"] .scope-tag {
+  background: #e0e7ff;
+  color: #4338ca;
+  border-color: #c7d2fe;
+}
+
+[data-theme="light"] .scope-tag.event {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #a7f3d0;
+}
+
+[data-theme="light"] .key-code {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+[data-theme="light"] .hash-code {
+  color: #4338ca;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+}
+
+[data-theme="light"] .diagnostic-latency,
+[data-theme="light"] .latency-badge {
+  color: #047857;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+}
+
+[data-theme="light"] .audit-verification-banner {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+[data-theme="light"] .audit-verification-banner .verification-badge {
+  color: #047857;
+}
+
+[data-theme="light"] .audit-verification-banner .verification-meta code {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+[data-theme="light"] .subsystem-kv code {
+  background: #f1f5f9;
+  color: #0f172a;
+  border: 1px solid #e2e8f0;
+}
+
+[data-theme="light"] .status-dot.green {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #a7f3d0;
+}
+
+[data-theme="light"] .openapi-icon-box {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+
+[data-theme="light"] .key-secret-input {
+  background: #f8fafc;
+  color: #0369a1;
+  border-color: #cbd5e1;
+}
+
 
 
 
