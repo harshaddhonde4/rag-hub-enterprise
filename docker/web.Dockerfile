@@ -10,5 +10,6 @@ COPY apps/web apps/web
 RUN npm run build -w @rag-hub/web
 
 FROM nginx:1.27-alpine
+COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/apps/web/dist /usr/share/nginx/html
 EXPOSE 80

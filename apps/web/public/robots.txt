@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Allow: /platform
+Allow: /solutions
+Allow: /security
+Allow: /pricing
+Allow: /docs
+Allow: /contact
+Disallow: /api/
+Disallow: /workspace
+
+Sitemap: https://raghub.enterprise/sitemap.xml

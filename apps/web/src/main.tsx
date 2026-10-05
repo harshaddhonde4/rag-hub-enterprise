@@ -60,6 +60,7 @@ import {
   PublicFooter,
   LegalModal
 } from './public-pages';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
 
@@ -547,7 +548,12 @@ export function App() {
   });
   const [publicPage, setPublicPage] = useState<'platform' | 'solutions' | 'security' | 'pricing' | 'contact' | 'docs' | 'auth'>(() => {
     try {
-      const hash = window.location.hash.replace('#', '');
+      const pathParts = window.location.pathname.replace(/^\//, '').split('/');
+      const pageFromPath = pathParts[0]?.toLowerCase();
+      if (['platform', 'solutions', 'security', 'pricing', 'contact', 'docs', 'auth'].includes(pageFromPath)) {
+        return pageFromPath as any;
+      }
+      const hash = window.location.hash.replace(/^#\/?/, '');
       const [p] = hash.split('/');
       if (['platform', 'solutions', 'security', 'pricing', 'contact', 'docs', 'auth'].includes(p)) {
         return p as any;
@@ -562,9 +568,11 @@ export function App() {
   });
   const [publicSubSection, setPublicSubSection] = useState<string | null>(() => {
     try {
-      const hash = window.location.hash.replace('#', '');
+      const pathParts = window.location.pathname.replace(/^\//, '').split('/');
+      if (pathParts.length > 1 && pathParts[1]) return pathParts[1];
+      const hash = window.location.hash.replace(/^#\/?/, '');
       const parts = hash.split('/');
-      if (parts.length > 1) return parts[1];
+      if (parts.length > 1 && parts[1]) return parts[1];
     } catch {}
     return null;
   });
@@ -584,38 +592,58 @@ export function App() {
   }, [theme]);
 
   useEffect(() => {
-    const handleHash = () => {
-      const raw = window.location.hash.replace('#', '');
-      const [pagePart, subPart] = raw.split('/');
-      if (['platform', 'solutions', 'security', 'pricing', 'contact', 'docs', 'auth'].includes(pagePart)) {
-        setPublicPage(pagePart as any);
-        setPublicSubSection(subPart || null);
-        setViewMode('public');
-      } else if (['workspace', 'app'].includes(raw) || raw.startsWith('tab-')) {
-        if (localStorage.getItem('raghub-token')) {
-          setViewMode('workspace');
-          if (raw.startsWith('tab-')) {
-            const t = raw.replace('tab-', '');
-            if (['chat', 'departments', 'documents', 'approvals', 'audit', 'analytics', 'platform'].includes(t)) {
-              setActiveTab(t as any);
-            }
-          }
-        } else {
-          setPublicPage('auth');
-          setPublicSubSection(null);
+    const handleUrlChange = () => {
+      try {
+        const pathParts = window.location.pathname.replace(/^\//, '').split('/');
+        const pageFromPath = pathParts[0]?.toLowerCase();
+        if (['platform', 'solutions', 'security', 'pricing', 'contact', 'docs', 'auth'].includes(pageFromPath)) {
+          setPublicPage(pageFromPath as any);
+          setPublicSubSection(pathParts[1] || null);
           setViewMode('public');
+          return;
         }
-      }
+
+        const raw = window.location.hash.replace(/^#\/?/, '');
+        const [pagePart, subPart] = raw.split('/');
+        if (['platform', 'solutions', 'security', 'pricing', 'contact', 'docs', 'auth'].includes(pagePart)) {
+          setPublicPage(pagePart as any);
+          setPublicSubSection(subPart || null);
+          setViewMode('public');
+        } else if (['workspace', 'app'].includes(raw) || raw.startsWith('tab-')) {
+          if (localStorage.getItem('raghub-token')) {
+            setViewMode('workspace');
+            if (raw.startsWith('tab-')) {
+              const t = raw.replace('tab-', '');
+              if (['chat', 'departments', 'documents', 'approvals', 'audit', 'analytics', 'platform'].includes(t)) {
+                setActiveTab(t as any);
+              }
+            }
+          } else {
+            setPublicPage('auth');
+            setPublicSubSection(null);
+            setViewMode('public');
+          }
+        }
+      } catch {}
     };
-    window.addEventListener('hashchange', handleHash);
-    return () => window.removeEventListener('hashchange', handleHash);
+
+    window.addEventListener('hashchange', handleUrlChange);
+    window.addEventListener('popstate', handleUrlChange);
+    return () => {
+      window.removeEventListener('hashchange', handleUrlChange);
+      window.removeEventListener('popstate', handleUrlChange);
+    };
   }, []);
 
   const handleSetPublicPage = (page: 'platform' | 'solutions' | 'security' | 'pricing' | 'contact' | 'docs' | 'auth', subSection?: string) => {
     setPublicPage(page);
     setPublicSubSection(subSection || null);
     try {
-      window.location.hash = subSection ? `${page}/${subSection}` : page;
+      const targetHash = subSection ? `${page}/${subSection}` : page;
+      window.location.hash = targetHash;
+      if (window.history && window.history.pushState) {
+        window.history.pushState(null, '', `/${page}${subSection ? `/${subSection}` : ''}`);
+      }
       if (!subSection) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
@@ -1395,7 +1423,7 @@ export function App() {
 
   if (viewMode === 'public' || (!token && publicPage !== 'auth')) {
     return (
-      <div className="public-page-wrapper">
+      <div id="main-content" className="public-page-wrapper">
         <PublicHeader
           activePage={publicPage}
           setActivePage={handleSetPublicPage}
@@ -1460,7 +1488,7 @@ export function App() {
 
   if (!token) {
     return (
-      <div className="public-page-wrapper">
+      <div id="main-content" className="public-page-wrapper">
         <PublicHeader
           activePage="auth"
           setActivePage={handleSetPublicPage}
@@ -1506,7 +1534,7 @@ export function App() {
   }
 
   return (
-    <div className="app-layout">
+    <div id="main-content" className="app-layout">
       {/* MOBILE HEADER */}
       <div className="mobile-top-bar">
         <button type="button" className="btn-icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
@@ -1849,18 +1877,20 @@ export function App() {
             <div className="chat-conversation-panel">
               {/* Department Barrier Banner */}
               <div className="department-barrier-banner">
-                <Lock size={15} />
-                <span>
-                  Query execution strictly bounded to <strong>{currentDept?.name}</strong>. Cross-department data leakage
-                  is prevented at API & PostgreSQL RLS layers.
-                </span>
+                <div className="barrier-info-text">
+                  <Lock size={15} />
+                  <span>
+                    Query execution strictly bounded to <strong>{currentDept?.name}</strong>. Cross-department data leakage
+                    is prevented at API & PostgreSQL RLS layers.
+                  </span>
+                </div>
                 {chatHistory.length > 0 && (
                   <div className="chat-top-actions">
                     <button type="button" className="btn-chip" onClick={handleExportChat} title="Export Transcript">
                       <Download size={13} /> Export
                     </button>
-                    <button type="button" className="btn-chip" onClick={() => setChatHistory([])} title="Clear Messages">
-                      Clear
+                    <button type="button" className="btn-chip danger" onClick={() => setChatHistory([])} title="Clear Messages">
+                      <Trash2 size={13} /> Clear
                     </button>
                   </div>
                 )}
@@ -3924,4 +3954,8 @@ export function App() {
   );
 }
 
-createRoot(document.getElementById('root')!).render(<App />);
+createRoot(document.getElementById('root')!).render(
+  <ErrorBoundary>
+    <App />
+  </ErrorBoundary>
+);

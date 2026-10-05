@@ -1,0 +1,42 @@
+name: Enterprise CI Workflow
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate-and-build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x]
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install Monorepo Dependencies
+        run: npm ci
+
+      - name: Validate API TypeScript Types
+        run: npm run build -w @rag-hub/api
+
+      - name: Validate Web TypeScript Types and Production Build
+        run: npm run build -w @rag-hub/web
+
+      - name: Verify Web Distribution Assets
+        run: |
+          test -f apps/web/dist/index.html
+          test -f apps/web/dist/robots.txt
+          test -f apps/web/dist/sitemap.xml
+          test -f apps/web/dist/.well-known/security.txt
+          echo "All enterprise assets successfully compiled."
