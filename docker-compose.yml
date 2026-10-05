@@ -23,6 +23,8 @@ services:
         target: /docker-entrypoint-initdb.d/004_department_approval.sql
       - source: document_summaries
         target: /docker-entrypoint-initdb.d/005_document_summaries.sql
+      - source: developer_and_system
+        target: /docker-entrypoint-initdb.d/008_developer_and_system.sql
   api:
     build:
       context: .
@@ -60,3 +62,6 @@ configs:
     file: ./apps/api/sql/004_department_approval.sql
   document_summaries:
     file: ./apps/api/sql/005_document_summaries.sql
+  developer_and_system:
+    file: ./apps/api/sql/008_developer_and_system.sql
+
